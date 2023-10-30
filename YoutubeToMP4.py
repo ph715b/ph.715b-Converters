@@ -2,6 +2,7 @@ import os
 from pytube import YouTube
 import tkinter as tk
 from tkinter import ttk, filedialog
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_audio
 
 def download_video():
     url = url_entry.get()
@@ -22,6 +23,13 @@ def browse_directory():
     selected_directory = filedialog.askdirectory()
     if selected_directory:
         download_path_var.set(selected_directory)
+
+def convert_to_wav():
+    mp4_file = filedialog.askopenfilename(filetypes=[("MP4 files", "*.mp4")])
+    if mp4_file:
+        wav_file = mp4_file.replace(".mp4", ".wav")
+        ffmpeg_extract_audio(mp4_file, wav_file)
+        result_label.config(text=f"Conversion complete: {os.path.basename(wav_file)}")
 
 # Create a better-looking GUI using ttk widgets
 window = tk.Tk()
@@ -57,6 +65,9 @@ browse_button.grid(row=2, column=2, padx=10, pady=5)
 
 download_button = ttk.Button(window, text="Download", command=download_video)
 download_button.grid(row=3, column=1, padx=10, pady=10)
+
+convert_button = ttk.Button(window, text="Convert to WAV", command=convert_to_wav)
+convert_button.grid(row=5, column=1, padx=10, pady=10)
 
 result_label = ttk.Label(window, text="")
 result_label.grid(row=4, column=1, padx=10, pady=5)
